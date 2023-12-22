@@ -1,11 +1,5 @@
-import DateCounter from './DateCounter';
-
 function App() {
-  return (
-    <div>
-      <DateCounter />
-    </div>
-  );
+  return <div></div>;
 }
 
 export default App;
