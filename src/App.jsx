@@ -1,6 +1,7 @@
 import { useEffect, useReducer } from 'react';
 import Header from './components/Header';
 import Main from './components/Main';
+import Question from './components/Question';
 import StartScreen from './components/StartScreen';
 import Error from './Error';
 import Loader from './Loader';
@@ -19,8 +20,8 @@ function reducer(currState, action) {
     case 'dataFailed':
       return { ...currState, status: 'error' };
       break;
-    case '':
-      return { ...currState, questions: action.payload, status: 'ready' };
+    case 'startQuize':
+      return { ...currState, status: action.payload };
       break;
 
     default:
@@ -47,7 +48,10 @@ function App() {
       <Main>
         {status === 'loading' && <Loader />}
         {status === 'error' && <Error />}
-        {status === 'ready' && <StartScreen numOfQuestions={numOfQuestions} />}
+        {status === 'active' && <Question questions={questions} />}
+        {status === 'ready' && (
+          <StartScreen numOfQuestions={numOfQuestions} dispatch={dispatch} />
+        )}
       </Main>
     </div>
   );
