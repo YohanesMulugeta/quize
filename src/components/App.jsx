@@ -1,15 +1,18 @@
 import { useEffect, useReducer } from 'react';
-import Header from './components/Header';
-import Main from './components/Main';
-import Question from './components/Question';
-import StartScreen from './components/StartScreen';
+import Header from './Header';
+import Main from './Main';
+import Question from './Question';
+import StartScreen from './StartScreen';
 import Error from './Error';
 import Loader from './Loader';
+import Options from './Options';
 
 const initialState = {
   questions: [],
   // loading, error, ready, active, finished
   status: 'loading',
+  index: 0,
+  answer: null,
 };
 
 function reducer(currState, action) {
@@ -21,7 +24,10 @@ function reducer(currState, action) {
       return { ...currState, status: 'error' };
       break;
     case 'startQuize':
-      return { ...currState, status: action.payload };
+      return { ...currState, status: 'active' };
+      break;
+    case 'newAnswer':
+      return { ...currState, answer: action.payload };
       break;
 
     default:
@@ -31,8 +37,13 @@ function reducer(currState, action) {
 }
 
 function App() {
-  const [{ status, questions }, dispatch] = useReducer(reducer, initialState);
+  const [{ status, questions, index, answer }, dispatch] = useReducer(
+    reducer,
+    initialState
+  );
   const numOfQuestions = questions.length;
+
+  console.log(answer);
 
   // Fetch data
   useEffect(() => {
@@ -48,7 +59,11 @@ function App() {
       <Main>
         {status === 'loading' && <Loader />}
         {status === 'error' && <Error />}
-        {status === 'active' && <Question questions={questions} />}
+        {status === 'active' && (
+          <Question question={questions[index]}>
+            <Options question={questions[index]} dispatch={dispatch} answer={answer} />
+          </Question>
+        )}
         {status === 'ready' && (
           <StartScreen numOfQuestions={numOfQuestions} dispatch={dispatch} />
         )}

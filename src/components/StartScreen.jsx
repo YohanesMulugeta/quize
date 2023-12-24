@@ -1,6 +1,6 @@
 function StartScreen({ numOfQuestions, dispatch }) {
   const handleStartClick = () => {
-    dispatch({ type: 'startQuize', payload: 'active' });
+    dispatch({ type: 'startQuize' });
   };
 
   return (
