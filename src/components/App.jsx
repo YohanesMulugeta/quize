@@ -9,6 +9,7 @@ import Loader from './Loader';
 import Options from './Options';
 import NextButton from './NextButton';
 import Progress from './Progress';
+import FinishScreen from './FinishScreen';
 
 const initialState = {
   questions: [],
@@ -23,13 +24,13 @@ function reducer(currState, action) {
   switch (action.type) {
     case 'dataRecieved':
       return { ...currState, questions: action.payload, status: 'ready' };
-      break;
+
     case 'dataFailed':
       return { ...currState, status: 'error' };
-      break;
+
     case 'startQuize':
       return { ...currState, status: 'active' };
-      break;
+
     case 'newAnswer':
       const currQuestion = currState.questions[currState.index];
       return {
@@ -39,13 +40,19 @@ function reducer(currState, action) {
           currState.points +
           (action.payload === currQuestion.correctOption ? currQuestion.points : 0),
       };
-      break;
+
     case 'nextQuestion':
-      return { ...currState, index: 1 + currState.index, answer: null };
-      break;
+      return {
+        ...currState,
+        index: 1 + currState.index,
+        answer: null,
+      };
+
+    case 'finish':
+      return { ...currState, status: 'finished' };
+
     default:
       throw new Error('Unkown Action');
-      break;
   }
 }
 
@@ -82,14 +89,20 @@ function App() {
             />
             <Question question={questions[index]}>
               <Options question={questions[index]} dispatch={dispatch} answer={answer} />
-              {index < numOfQuestions - 1 && (
-                <NextButton dispatch={dispatch} answer={answer} points={points} />
-              )}
+              <NextButton
+                dispatch={dispatch}
+                answer={answer}
+                index={index}
+                numOfQuestions={numOfQuestions}
+              />
             </Question>
           </>
         )}
         {status === 'ready' && (
           <StartScreen numOfQuestions={numOfQuestions} dispatch={dispatch} />
+        )}
+        {status === 'finished' && (
+          <FinishScreen points={points} maxPossPoints={maxPossPoints} />
         )}
       </Main>
     </div>
