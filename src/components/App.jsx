@@ -30,7 +30,7 @@ function reducer(currState, action) {
       return { ...currState, status: 'error' };
 
     case 'startQuize':
-      return { ...currState, status: 'active' };
+      return { ...currState, status: 'active', index: 0, answer: null, points: 0 };
 
     case 'newAnswer':
       const currQuestion = currState.questions[currState.index];
@@ -112,6 +112,7 @@ function App() {
             points={points}
             maxPossPoints={maxPossPoints}
             highscore={highscore}
+            dispatch={dispatch}
           />
         )}
       </Main>
