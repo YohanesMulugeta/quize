@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import { useEffect, useReducer } from 'react';
 import Header from './Header';
 import Main from './Main';
@@ -6,6 +7,7 @@ import StartScreen from './StartScreen';
 import Error from './Error';
 import Loader from './Loader';
 import Options from './Options';
+import NextButton from './NextButton';
 
 const initialState = {
   questions: [],
@@ -13,6 +15,7 @@ const initialState = {
   status: 'loading',
   index: 0,
   answer: null,
+  points: 0,
 };
 
 function reducer(currState, action) {
@@ -27,9 +30,18 @@ function reducer(currState, action) {
       return { ...currState, status: 'active' };
       break;
     case 'newAnswer':
-      return { ...currState, answer: action.payload };
+      const currQuestion = currState.questions[currState.index];
+      return {
+        ...currState,
+        answer: action.payload,
+        points:
+          currState.points +
+          (action.payload === currQuestion.correctOption ? currQuestion.points : 0),
+      };
       break;
-
+    case 'nextQuestion':
+      return { ...currState, index: 1 + currState.index, answer: null };
+      break;
     default:
       throw new Error('Unkown Action');
       break;
@@ -42,8 +54,6 @@ function App() {
     initialState
   );
   const numOfQuestions = questions.length;
-
-  console.log(answer);
 
   // Fetch data
   useEffect(() => {
@@ -62,6 +72,7 @@ function App() {
         {status === 'active' && (
           <Question question={questions[index]}>
             <Options question={questions[index]} dispatch={dispatch} answer={answer} />
+            <NextButton dispatch={dispatch} answer={answer} />
           </Question>
         )}
         {status === 'ready' && (
